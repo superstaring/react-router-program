@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# react-router
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 创建项目
 
-## Available Scripts
+`npx create-react-app react-router-program`
 
-In the project directory, you can run:
+### 安装插件
 
-### `npm start`
+`npm i react-router-dom`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 使用方法
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+`import { createBrowserRouter, RouterProvider } from 'react-router-dom';`
 
-### `npm test`
+    const router = createBrowserRouter([{
+        path: '/login',
+        element: <Login />
+    }, {
+        path: '/article',
+        element: <Article />
+    }])
+`<RouterProvider router={router}></RouterProvider>`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 方法
 
-### `npm run build`
+#### 声明式写法
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+`<Link to="/article">跳转到文章页</Link>`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### 命令式写法
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+`import { useNavigate } from "react-router-dom";`
+    const navigate = useNavigate();
+    <button onClick={() => navigate('/article')}>跳转到文章页</button>
 
-### `npm run eject`
+### 传参，两种方式
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+`import { Link, useSearchParams, useParams } from "react-router-dom";`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### /article?id=100&name=jack
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+    const [params] = useSearchParams();
+    const id = params.get('id');
+    const name = params.get('name');
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### /article/101
 
-## Learn More
+路由位置： `path: '/article/:id'`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+`const { id } = useParams();`
+   
+### 嵌套路由
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+在一级路由中又内嵌了其他路由，这种关系就叫做嵌套路由。嵌套至一级路由中的路由叫二级路由。
 
-### Code Splitting
+配置二级路由渲染位置：
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+`<Outlet />`
 
-### Analyzing the Bundle Size
+### 默认二级路由
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+当访问一级路由的时，默认的二级路由可以得到渲染，只需要在二级路由的位置去掉path，设置index属性为true。
 
-### Making a Progressive Web App
+### 404路由配置
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+当浏览器输入url的路径在整个路由配置中都找不到对应的path，为了用户体验，可以使用404兜底组件进行渲染。
 
-### Advanced Configuration
+    {
+        path: '*',
+        element: <NotFound />,
+    }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 两种路由模式
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+各个主流框架的路由常用的路由模式有两种，`history模式`和`hash模式`，ReactRouter分别由`createBrowerRouter`和`createHashRouter`函数负责创建。
+history模式需要后端支持。
